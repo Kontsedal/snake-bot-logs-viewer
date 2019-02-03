@@ -160,10 +160,10 @@ export class LogsViewer extends Component<LogsViewerProps, LogsViewerState> {
   getMarks = () => {
     let marks:any = [];
     let ticks = this.state.logs.sessions[this.state.currentSession];
-    ticks.forEach(tick => {
+    ticks.forEach((tick, index) => {
       if(tick.snakeIsDead) {
         marks.push({
-          value: tick.tickNumber,
+          value: index,
           label: ""
         })
       }

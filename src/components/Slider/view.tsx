@@ -98,7 +98,7 @@ export class SliderView extends Component<SliderViewProps> {
                             backgroundColor: color
                         };
                     }
-                    return <div key={label + className + value}
+                    return <div key={label + className + value + color}
                                 className={cx(MARKER_CLASS, className)} style={markerStyles}>{label}</div>
                 })}
             </div>

@@ -17,6 +17,7 @@ interface Marker {
     className: string,
     value: number
     percent: number,
+    color: string,
 }
 
 interface SliderViewProps {
@@ -84,15 +85,17 @@ export class SliderView extends Component<SliderViewProps> {
             <div className={cx(STRIP_CLASS, PROGRESS_STRIP_CLASS)}
                  style={progressStripStyles}/>
             <div className={MARKERS_CLASS}>
-                {markers.map(({label, className, value, percent}) => {
+                {markers.map(({label, className, value, percent, color}) => {
                     let markerStyles;
                     if (vertical) {
                         markerStyles = {
-                            bottom: percent + "%"
+                            bottom: percent + "%",
+                            backgroundColor: color
                         };
                     } else {
                         markerStyles = {
-                            left: percent + "%"
+                            left: percent + "%",
+                            backgroundColor: color
                         };
                     }
                     return <div key={label + className + value}

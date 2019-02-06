@@ -8,7 +8,8 @@ const MAX_ON_CHANGE_FREQUENCY_MS = 100;
 interface Marker {
   label?: string,
   className?: string,
-  value: number
+  value: number,
+  color?: string
 }
 
 interface SliderProps {
@@ -230,7 +231,8 @@ export class Slider extends Component<SliderProps> {
         value: 0,
         percent: 0,
         label: "",
-        className: ""
+        className: "",
+        color: "inherit",
       };
       newMarker.value = marker.value;
       let percent = marker.value * 100 / max;
@@ -243,6 +245,7 @@ export class Slider extends Component<SliderProps> {
       newMarker.percent = percent;
       newMarker.label = !_.isUndefined(marker.label) ? marker.label : "";
       newMarker.className = marker.className || "";
+      newMarker.color = marker.color || "";
       return newMarker;
     });
   }

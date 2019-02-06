@@ -49,6 +49,7 @@ interface Logs {
         selectedTarget: {x, y};
         nextPosition: {x:number, y:number} | null;
         snakeIsDead: boolean,
+        enemyIsDead: boolean,
         debug: {
           [key:string]: any
         }
@@ -164,7 +165,15 @@ export class LogsViewer extends Component<LogsViewerProps, LogsViewerState> {
       if(tick.snakeIsDead) {
         marks.push({
           value: index,
-          label: ""
+          label: "",
+          color: "rgb(206, 71, 81)"
+        })
+      }
+      if(tick.enemyIsDead) {
+        marks.push({
+          value: index,
+          label: "",
+          color: "rgb(121, 206, 121)"
         })
       }
     });

@@ -13,6 +13,7 @@ Expected json log format:
         selectedTarget: {x: number, y: number};
         nextPosition: {x:number, y:number} | null;
         snakeIsDead: boolean,
+        enemyIsDead: boolean,
         debug: {
           [key:string]: any
         }

@@ -1,0 +1,11 @@
+.c-cell {
+  position: absolute;
+  z-index: 2;
+  &:hover {
+    border: 1px solid grey;
+  }
+}
+
+.c-rectangle {
+  position: absolute;
+}

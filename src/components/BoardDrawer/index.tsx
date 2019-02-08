@@ -3,6 +3,8 @@ import {ELEMENT_TYPE, IMAGES_MAP} from "./constants";
 import styled from 'styled-components';
 import _ from "lodash";
 import styledComponentsTS from 'styled-components-ts'
+import {getKeyByValue} from "../../utils/getKeyByValue";
+import "./styles.scss";
 
 let DrawerWrapper = styled.div`
   width: 100%;
@@ -26,21 +28,6 @@ let Holder = styledComponentsTS<HolderProps>(styled.div)`
   position: relative;
 `;
 
-interface RectangleProps {
-  size: number,
-  x: number,
-  y: number,
-  color: string,
-}
-
-let Rectangle = styledComponentsTS<RectangleProps>(styled.div)`
-  position: absolute;
-  width: ${(props: any) => props.size + "px"};
-  height: ${(props: any) => props.size + "px"};
-  top: ${(props: any) => (+props.y * +props.size) + "px"};
-  left: ${(props: any) => (+props.x * +props.size) + "px"};
-  background-color: ${(props: any) => props.color};
-`;
 
 interface BoardDrawerProps {
   board: string,
@@ -48,8 +35,10 @@ interface BoardDrawerProps {
 }
 
 interface BoardDrawerState {
-  canvasWidth: number
+  canvasWidth: number,
+  cells: { x: number, y: number, type: string, typeName: string }[]
 }
+
 
 export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
   canvas: HTMLCanvasElement | null = null;
@@ -60,9 +49,11 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
 
   state = {
     canvasWidth: 500,
+    cells: []
   };
 
   updateCanvas() {
+    console.log("update")
     if (!this.ctx) {
       return;
     }
@@ -70,12 +61,23 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
     let {board} = this.props;
     let boardRowLength = Math.sqrt(board.length);
     this.boardRowLength = boardRowLength;
+    let cells: any = [];
     board.split("").map((element, index) => {
       let y = Math.floor(index / boardRowLength);
       let x = index - y * boardRowLength;
       let image = IMAGES_MAP[element as ELEMENT_TYPE];
+      let typeName = getKeyByValue(ELEMENT_TYPE, element);
+      cells.push({
+        x,
+        y,
+        type: element,
+        typeName
+      });
       return this.drawObject({x, y, image})
     });
+    this.setState({
+      cells
+    })
   }
 
 
@@ -138,10 +140,27 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
     let cellSize = this.state.canvasWidth / this.boardRowLength;
     return <DrawerWrapper ref={(elem: HTMLElement | null) => this.wrapper = elem}>
       <Holder>
+        {this.state.cells.map(({y, x, type, typeName}) => {
+          return <div className="c-cell"
+                      key={x + ":" + y}
+                      title={`y:${y} x:${x} type:"${type}" typeName: "${typeName}"`}
+                      style={{
+                        top: y * cellSize,
+                        left: x * cellSize,
+                        width: cellSize,
+                        height: cellSize
+                      }}/>
+        })}
         {this.props.rectangles && this.props.rectangles.map(rectangle => {
-          // @ts-ignore
-          return <Rectangle key={rectangle.x + ":" + rectangle.y + ":" + rectangle.color} size={cellSize}
-                            x={rectangle.x} y={rectangle.y} color={rectangle.color}/>
+          return <div className="c-rectangle"
+                      key={rectangle.x + ":" + rectangle.y + ":" + rectangle.color}
+                      style={{
+                        top: rectangle.y * cellSize,
+                        left: rectangle.x * cellSize,
+                        width: cellSize,
+                        height: cellSize,
+                        backgroundColor: rectangle.color
+                      }}/>;
         })}
         <Canvas width={this.state.canvasWidth} height={this.state.canvasWidth}
                 ref={(elem: HTMLCanvasElement | null) => this.canvas = elem}/>

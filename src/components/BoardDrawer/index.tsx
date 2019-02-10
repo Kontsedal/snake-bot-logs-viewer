@@ -107,7 +107,7 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
   };
 
   drawObject({x, y, image}: { x: number, y: number, image: string }) {
-    let cellSize = this.state.canvasWidth / this.boardRowLength;
+    let cellSize = this.getCellSize();
     let cachedImage = this.imagesCache[image];
     if (cachedImage) {
       if (!this.ctx) {
@@ -127,8 +127,12 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
     img.src = image;
   }
 
+  getCellSize() {
+    return Number((this.state.canvasWidth / this.boardRowLength).toFixed(0));
+  }
+
   render() {
-    let cellSize = this.state.canvasWidth / this.boardRowLength;
+    let cellSize = this.getCellSize();
     return <DrawerWrapper ref={(elem: HTMLElement | null) => this.wrapper = elem}>
       <Holder>
         {this.state.cells.map(({y, x, type, typeName}) => {

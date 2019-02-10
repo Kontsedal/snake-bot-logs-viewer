@@ -45,7 +45,7 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
   wrapper: HTMLElement | null = null;
   ctx: CanvasRenderingContext2D | null = null;
   boardRowLength: number = 1;
-  imagesCache: { [kay: string]: HTMLCanvasElement } = {};
+  imagesCache: { [kay: string]: HTMLImageElement } = {};
 
   state = {
     canvasWidth: 500,
@@ -86,7 +86,7 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
       return;
     }
     this.ctx = this.canvas.getContext("2d");
-    window.addEventListener("resize", _.throttle(this.updateCanvasSize, 500, {trailing: false}));
+    window.addEventListener("resize", _.debounce(this.updateCanvasSize, 100));
     this.updateCanvasSize();
   }
 
@@ -107,33 +107,24 @@ export class BoardDrawer extends Component<BoardDrawerProps, BoardDrawerState> {
   };
 
   drawObject({x, y, image}: { x: number, y: number, image: string }) {
-    return new Promise(resolve => {
-      let cellSize = this.state.canvasWidth / this.boardRowLength;
-      let cachedImage = this.imagesCache[image + cellSize];
-      if (cachedImage) {
-        if (!this.ctx) {
-          return resolve();
-        }
-        this.ctx.drawImage(cachedImage, x * cellSize, y * cellSize, cellSize, cellSize);
-        return resolve();
+    let cellSize = this.state.canvasWidth / this.boardRowLength;
+    let cachedImage = this.imagesCache[image + cellSize];
+    if (cachedImage) {
+      if (!this.ctx) {
+        return;
       }
-
-      let img = new Image();
-      img.onload = () => {
-        let offscreenCanvas = document.createElement('canvas');
-        offscreenCanvas.width = cellSize;
-        offscreenCanvas.height = cellSize;
-        let offscreenCanvasCtx = offscreenCanvas.getContext("2d");
-        if (!this.ctx || !offscreenCanvasCtx) {
-          return resolve();
-        }
-        offscreenCanvasCtx.drawImage(img, 0, 0, cellSize, cellSize);
-        this.ctx.drawImage(offscreenCanvas, x * cellSize, y * cellSize, cellSize, cellSize);
-        this.imagesCache[image + cellSize] = offscreenCanvas;
-        resolve();
-      };
-      img.src = image;
-    })
+      this.ctx.drawImage(cachedImage, x * cellSize, y * cellSize, cellSize, cellSize);
+      return;
+    }
+    let img = new Image();
+    img.onload = () => {
+      if (!this.ctx) {
+        return;
+      }
+      this.ctx.drawImage(img, x * cellSize, y * cellSize, cellSize, cellSize);
+      this.imagesCache[image + cellSize] = img;
+    };
+    img.src = image;
   }
 
   render() {

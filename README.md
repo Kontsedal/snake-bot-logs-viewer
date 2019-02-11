@@ -24,3 +24,5 @@ Expected json log format:
 ```
 
 You can get current tick info by clicking on rendered board
+
+![demonstration](https://i.ibb.co/xsMJy0G/gifff.gif)
